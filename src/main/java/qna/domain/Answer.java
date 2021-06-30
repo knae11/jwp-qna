@@ -2,13 +2,13 @@ package qna.domain;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
-import java.util.Stack;
 /*
 create table answer
 (
@@ -44,6 +44,10 @@ public class Answer {
     @ManyToOne
     @JoinColumn(name = "writer_id")
     private User writer;
+
+
+    @OneToOne
+    private DeleteHistory deleteHistory;
 
     public Answer(User writer, Question question, String contents) {
         this(null, writer, question, contents);
@@ -128,5 +132,15 @@ public class Answer {
                 ", updatedAt=" + updatedAt +
                 ", writer=" + writer +
                 '}';
+    }
+
+    public DeleteHistory delete(User loginUser) throws CannotDeleteException {
+        if (!this.isOwner(loginUser)) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
+        this.deleted = true;
+
+        return new DeleteHistory(ContentType.ANSWER, this.id, this.writer);
+
     }
 }

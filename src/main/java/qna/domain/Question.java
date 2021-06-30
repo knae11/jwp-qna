@@ -1,9 +1,12 @@
 package qna.domain;
 
 import org.springframework.data.annotation.CreatedDate;
+import qna.CannotDeleteException;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 /*
 create table question
@@ -34,6 +37,12 @@ public class Question {
     private String title;
     @ManyToOne
     private User writer;
+    @OneToMany(mappedBy = "question")
+    private List<Answer> answers = new ArrayList<>();
+
+    @OneToOne
+    private DeleteHistory deleteHistory;
+
 
     public Question(String title, String contents) {
         this(null, title, contents);
@@ -59,7 +68,8 @@ public class Question {
     }
 
     public void addAnswer(Answer answer) {
-        answer.toQuestion(this);
+        answers.add(answer);
+//        answer.toQuestion(this);
     }
 
     public Long getId() {
@@ -111,5 +121,26 @@ public class Question {
                 ", writer=" + writer.getName() +
                 ", deleted=" + deleted +
                 '}';
+    }
+
+    public List<Answer> getAnswers() {
+
+        return answers;
+    }
+
+
+    public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+
+        if (!this.isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+        this.deleted = true;
+        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, this.id, this.writer));
+
+        for (Answer answer : answers) {
+            deleteHistories.add(answer.delete(loginUser));
+        }
+        return deleteHistories;
     }
 }

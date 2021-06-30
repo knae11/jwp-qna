@@ -5,6 +5,7 @@ import org.springframework.data.annotation.CreatedDate;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
+
 /*
 create table delete_history
 (
@@ -31,11 +32,11 @@ public class DeleteHistory {
     @JoinColumn(name = "deleted_by_id")
     private User user;
 
-    public DeleteHistory(ContentType contentType, Long contentId, Long deletedById, LocalDateTime createDate) {
+
+    public DeleteHistory(ContentType contentType, Long contentId, User user) {
         this.contentType = contentType;
         this.contentId = contentId;
         this.user = user;
-        this.createDate = createDate;
     }
 
     public DeleteHistory() {
@@ -47,12 +48,12 @@ public class DeleteHistory {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         DeleteHistory that = (DeleteHistory) o;
-        return Objects.equals(id, that.id) && Objects.equals(contentId, that.contentId) && contentType == that.contentType && Objects.equals(createDate, that.createDate) && Objects.equals(user, that.user);
+        return Objects.equals(id, that.id) && Objects.equals(contentId, that.contentId) && contentType == that.contentType && Objects.equals(user, that.user);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, contentId, contentType, createDate, user);
+        return Objects.hash(id, contentId, contentType, user);
     }
 
     @Override
@@ -61,7 +62,6 @@ public class DeleteHistory {
                 "id=" + id +
                 ", contentId=" + contentId +
                 ", contentType=" + contentType +
-                ", createDate=" + createDate +
                 ", user=" + user +
                 '}';
     }
