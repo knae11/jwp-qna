@@ -39,7 +39,7 @@ public class DeleteHistory {
         this.user = user;
     }
 
-    public DeleteHistory() {
+    protected DeleteHistory() {
 
     }
 
