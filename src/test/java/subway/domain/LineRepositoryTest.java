@@ -23,6 +23,7 @@ class LineRepositoryTest {
         //예외 이유: 연관관계 매핑을 하는 엔티티들은 영속화된 상태여야 한다!!!!!!
         stations.save(station);
     }
+
     @Test
     void saveWithLine_success() {
         Station station = new Station("교대역");

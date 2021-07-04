@@ -52,7 +52,7 @@ public class Question extends BaseEntity {
     }
 
     public Question(String title, String contents, User writer) {
-        this.title= title;
+        this.title = title;
         this.contents = contents;
         this.writer = writer;
     }

@@ -33,16 +33,6 @@ public class Station {
     public Station() {
     }
 
-    public void setLine(Line line) {
-        if(Objects.nonNull(line)){
-            line.getStations().remove(this);
-        }
-        // 이미 연관관계 매핑되었다면 무한루프 빠지지 않기 위한 코드가 필요!
-        this.line = line;
-        //line.addStation(this); // 여기도 연관관계 편의 메소드 -> 무한루프!!! ㅠㅠ
-        line.getStations().add(this);
-    }
-
     public String getName() {
         return name;
     }
@@ -57,5 +47,15 @@ public class Station {
 
     public Line getLine() {
         return line;
+    }
+
+    public void setLine(Line line) {
+        if (Objects.nonNull(line)) {
+            line.getStations().remove(this);
+        }
+        // 이미 연관관계 매핑되었다면 무한루프 빠지지 않기 위한 코드가 필요!
+        this.line = line;
+        //line.addStation(this); // 여기도 연관관계 편의 메소드 -> 무한루프!!! ㅠㅠ
+        line.getStations().add(this);
     }
 }

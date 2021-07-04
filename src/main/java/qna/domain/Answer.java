@@ -1,7 +1,5 @@
 package qna.domain;
 
-import com.sun.istack.NotNull;
-import org.hibernate.annotations.NotFound;
 import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
@@ -62,7 +60,7 @@ public class Answer extends BaseEntity {
     }
 
     public void toQuestion(Question question) {
-        if(question.containsAnswer(this)){
+        if (question.containsAnswer(this)) {
             question.removeAnswer(this);
         }
         this.question = question;
