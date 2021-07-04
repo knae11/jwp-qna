@@ -19,6 +19,8 @@ create table delete_history
  */
 @Entity
 public class DeleteHistory extends BaseEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Long contentId;
     @Enumerated(EnumType.STRING)

@@ -1,6 +1,7 @@
 package qna.domain;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 /*
 create table user
@@ -46,12 +47,23 @@ public class User extends BaseEntity {
         this.email = email;
     }
 
+    public User(String userId, String password, String name, String email) {
+        this.userId = userId;
+        this.password = password;
+        this.name = name;
+        this.email = email;
+    }
+
     public boolean isGuestUser() {
         return false;
     }
 
     public String getName() {
         return name;
+    }
+
+    public Long getId() {
+        return id;
     }
 
     @Override
@@ -63,6 +75,10 @@ public class User extends BaseEntity {
                 ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
                 '}';
+    }
+
+    public void changeName(String name) {
+        this.name = name;
     }
 
     private static class GuestUser extends User {

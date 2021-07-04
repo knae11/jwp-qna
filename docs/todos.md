@@ -2,7 +2,7 @@
 - [x] 도메인 테스트 작성하기
 - [x] 사용하지 않는 getter, setter 삭제
 - [x] `@MappedSuperClass` 사용하여 제거
-- [ ] 엔티티의 생성시간과 마지막 수정시간 업데이트 되는거 맞는지? -> 테스트 작성하여 확인
+- [x] 엔티티의 생성시간과 마지막 수정시간 업데이트 되는거 맞는지? -> 테스트 작성하여 확인
 - [x] Question, Answer 양방향 관계인데 메소드는?
 - [x] Question, Answer도 DeleteHistory 알아야 하나?
 - [x] 매개변수 없는 생성자의 접근 제어자가 public일 필요가 있나?

@@ -4,7 +4,6 @@ import qna.CannotDeleteException;
 
 import javax.persistence.*;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
@@ -23,6 +22,9 @@ create table question
  */
 @Entity
 public class Question extends BaseEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Lob
     private String contents;
@@ -49,7 +51,7 @@ public class Question extends BaseEntity {
     }
 
     public void addAnswer(Answer answer) {
-        if(Objects.isNull(answer.getQuestion())){
+        if (Objects.isNull(answer.getQuestion())) {
             answer.toQuestion(this);
         }
         answers.add(answer);
