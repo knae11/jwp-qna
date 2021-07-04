@@ -1,10 +1,6 @@
 package qna.domain;
 
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
 /*
 create table user
@@ -24,23 +20,18 @@ alter table user
  */
 
 @Entity
-public class User {
+public class User extends BaseEntity {
     public static final GuestUser GUEST_USER = new GuestUser();
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @CreatedDate
-    @Column(updatable = false, nullable = false)
-    private LocalDateTime createdAt;
     @Column(length = 50)
     private String email;
     @Column(length = 20, nullable = false)
     private String name;
     @Column(length = 20, nullable = false)
     private String password;
-    @LastModifiedDate
-    private LocalDateTime updatedAt;
     @Column(nullable = false, unique = true, length = 20)
     private String userId;
 
@@ -71,11 +62,9 @@ public class User {
         this.id = id;
     }
 
-
     public String getName() {
         return name;
     }
-
 
     @Override
     public String toString() {

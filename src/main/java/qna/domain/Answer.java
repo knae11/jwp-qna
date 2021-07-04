@@ -1,13 +1,10 @@
 package qna.domain;
 
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.Objects;
 /*
 create table answer
@@ -24,23 +21,17 @@ create table answer
  */
 
 @Entity
-public class Answer {
+public class Answer extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Lob
     private String contents;
-
-    @CreatedDate
-    @Column(updatable = false, nullable = false)
-    private LocalDateTime createdAt;
     @Column(nullable = false)
     private boolean deleted = false;
     @ManyToOne
     @JoinColumn(name = "question_id")
     private Question question;
-    @LastModifiedDate
-    private LocalDateTime updatedAt;
     @ManyToOne
     @JoinColumn(name = "writer_id")
     private User writer;
@@ -102,11 +93,10 @@ public class Answer {
         return "Answer{" +
                 "id=" + id +
                 ", contents='" + contents + '\'' +
-                ", createdAt=" + createdAt +
                 ", deleted=" + deleted +
                 ", question=" + question +
-                ", updatedAt=" + updatedAt +
                 ", writer=" + writer +
+                ", deleteHistory=" + deleteHistory +
                 '}';
     }
 

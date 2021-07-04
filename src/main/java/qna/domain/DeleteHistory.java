@@ -18,16 +18,13 @@ create table delete_history
 )
  */
 @Entity
-public class DeleteHistory {
+public class DeleteHistory extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Long contentId;
     @Enumerated(EnumType.STRING)
     private ContentType contentType;
-    @CreatedDate
-    @Column(updatable = false)
-    private LocalDateTime createDate = LocalDateTime.now();
     @ManyToOne
     @JoinColumn(name = "deleted_by_id")
     private User user;

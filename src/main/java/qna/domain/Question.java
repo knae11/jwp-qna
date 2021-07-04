@@ -22,15 +22,12 @@ create table question
 )
  */
 @Entity
-public class Question {
+public class Question extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Lob
     private String contents;
-    @CreatedDate
-    @Column(updatable = false, nullable = false)
-    private LocalDateTime createdAt;
     @Column(nullable = false)
     private boolean deleted = false;
     @Column(nullable = false, length = 100)
