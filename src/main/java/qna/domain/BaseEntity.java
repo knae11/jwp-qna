@@ -20,4 +20,8 @@ public abstract class BaseEntity {
 
     @LastModifiedDate
     private LocalDateTime updatedAt;
+
+    protected Long getId() {
+        return id;
+    }
 }

@@ -22,8 +22,6 @@ create table answer
 
 @Entity
 public class Answer extends BaseEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Lob
     private String contents;
@@ -36,9 +34,8 @@ public class Answer extends BaseEntity {
     @JoinColumn(name = "writer_id")
     private User writer;
 
-
-    @OneToOne
-    private DeleteHistory deleteHistory;
+    protected Answer() {
+    }
 
     public Answer(User writer, Question question, String contents) {
         this(null, writer, question, contents);
@@ -60,32 +57,41 @@ public class Answer extends BaseEntity {
         this.contents = contents;
     }
 
-    protected Answer() {
-
-    }
-
-    public boolean isOwner(User writer) {
-        return this.writer.getId().equals(writer.getId());
-    }
-
     public void toQuestion(Question question) {
+        if(question.containsAnswer(this)){
+            question.removeAnswer(this);
+        }
         this.question = question;
+        question.addAnswer(this);
+    }
+
+    public DeleteHistory delete(User loginUser) throws CannotDeleteException {
+        if (!this.isOwner(loginUser)) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
+        this.deleted = true;
+
+        return new DeleteHistory(ContentType.ANSWER, this.id, this.writer);
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public User getWriter() {
         return writer;
     }
 
+    public Question getQuestion() {
+        return question;
+    }
+
     public boolean isDeleted() {
         return deleted;
+    }
+
+    public boolean isOwner(User writer) {
+        return this.writer.equals(writer);
     }
 
     @Override
@@ -96,17 +102,6 @@ public class Answer extends BaseEntity {
                 ", deleted=" + deleted +
                 ", question=" + question +
                 ", writer=" + writer +
-                ", deleteHistory=" + deleteHistory +
                 '}';
-    }
-
-    public DeleteHistory delete(User loginUser) throws CannotDeleteException {
-        if (!this.isOwner(loginUser)) {
-            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
-        }
-        this.deleted = true;
-
-        return new DeleteHistory(ContentType.ANSWER, this.id, this.writer);
-
     }
 }

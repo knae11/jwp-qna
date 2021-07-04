@@ -1,12 +1,12 @@
 package qna.domain;
 
-import org.springframework.data.annotation.CreatedDate;
 import qna.CannotDeleteException;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 /*
 create table question
@@ -23,8 +23,6 @@ create table question
  */
 @Entity
 public class Question extends BaseEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Lob
     private String contents;
@@ -37,9 +35,8 @@ public class Question extends BaseEntity {
     @OneToMany(mappedBy = "question")
     private List<Answer> answers = new ArrayList<>();
 
-    @OneToOne
-    private DeleteHistory deleteHistory;
-
+    protected Question() {
+    }
 
     public Question(String title, String contents) {
         this(null, title, contents);
@@ -51,9 +48,36 @@ public class Question extends BaseEntity {
         this.contents = contents;
     }
 
-    protected Question() {
-
+    public void addAnswer(Answer answer) {
+        if(Objects.isNull(answer.getQuestion())){
+            answer.toQuestion(this);
+        }
+        answers.add(answer);
     }
+
+    public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+
+        if (!this.isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+        this.deleted = true;
+        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, this.id, this.writer));
+
+        for (Answer answer : answers) {
+            deleteHistories.add(answer.delete(loginUser));
+        }
+        return deleteHistories;
+    }
+
+    public boolean containsAnswer(Answer answer) {
+        return this.answers.contains(answer);
+    }
+
+    public void removeAnswer(Answer answer) {
+        this.answers.remove(answer);
+    }
+
 
     public Question writeBy(User writer) {
         this.writer = writer;
@@ -61,20 +85,11 @@ public class Question extends BaseEntity {
     }
 
     public boolean isOwner(User writer) {
-        return this.writer.getId().equals(writer.getId());
-    }
-
-    public void addAnswer(Answer answer) {
-        answers.add(answer);
-//        answer.toQuestion(this);
+        return this.writer.equals(writer);
     }
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public User getWriter() {
@@ -96,18 +111,4 @@ public class Question extends BaseEntity {
                 '}';
     }
 
-    public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
-        List<DeleteHistory> deleteHistories = new ArrayList<>();
-
-        if (!this.isOwner(loginUser)) {
-            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
-        }
-        this.deleted = true;
-        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, this.id, this.writer));
-
-        for (Answer answer : answers) {
-            deleteHistories.add(answer.delete(loginUser));
-        }
-        return deleteHistories;
-    }
 }

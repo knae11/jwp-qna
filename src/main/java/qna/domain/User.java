@@ -35,8 +35,7 @@ public class User extends BaseEntity {
     @Column(nullable = false, unique = true, length = 20)
     private String userId;
 
-    public User(String userId, String password, String name, String email) {
-        this(null, userId, password, name, email);
+    protected User() {
     }
 
     public User(Long id, String userId, String password, String name, String email) {
@@ -47,19 +46,8 @@ public class User extends BaseEntity {
         this.email = email;
     }
 
-    protected User() {
-    }
-
     public boolean isGuestUser() {
         return false;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getName() {
