@@ -1,5 +1,7 @@
 package qna.domain;
 
+import com.sun.istack.NotNull;
+import org.hibernate.annotations.NotFound;
 import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;

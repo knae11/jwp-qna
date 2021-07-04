@@ -33,8 +33,9 @@ public class Question extends BaseEntity {
     @Column(nullable = false, length = 100)
     private String title;
     @ManyToOne
+    @JoinColumn(name = "writer_id")
     private User writer;
-    @OneToMany(mappedBy = "question")
+    @OneToMany(mappedBy = "question", fetch = FetchType.EAGER)
     private List<Answer> answers = new ArrayList<>();
 
     protected Question() {
@@ -50,6 +51,12 @@ public class Question extends BaseEntity {
         this.contents = contents;
     }
 
+    public Question(String title, String contents, User writer) {
+        this.title= title;
+        this.contents = contents;
+        this.writer = writer;
+    }
+
     public void addAnswer(Answer answer) {
         if (Objects.isNull(answer.getQuestion())) {
             answer.toQuestion(this);
@@ -58,18 +65,27 @@ public class Question extends BaseEntity {
     }
 
     public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
-        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        validateToDelete(loginUser);
 
-        if (!this.isOwner(loginUser)) {
-            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
-        }
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
         this.deleted = true;
         deleteHistories.add(new DeleteHistory(ContentType.QUESTION, this.id, this.writer));
 
+        deleteAnswers(loginUser, deleteHistories);
+
+        return deleteHistories;
+    }
+
+    private void validateToDelete(User loginUser) throws CannotDeleteException {
+        if (!this.isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+    }
+
+    private void deleteAnswers(User loginUser, List<DeleteHistory> deleteHistories) throws CannotDeleteException {
         for (Answer answer : answers) {
             deleteHistories.add(answer.delete(loginUser));
         }
-        return deleteHistories;
     }
 
     public boolean containsAnswer(Answer answer) {
