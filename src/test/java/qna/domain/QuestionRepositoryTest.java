@@ -8,6 +8,9 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.context.ActiveProfiles;
 import qna.CannotDeleteException;
 
+import java.util.List;
+import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ActiveProfiles("qna")
@@ -35,6 +38,7 @@ class QuestionRepositoryTest {
         Answer savedAnswer = answers.save(new Answer(savedUser, savedQuestion, "abc"));
         savedQuestion.addAnswer(savedAnswer);
 
+        testEntityManager.clear();
         Question foundQ = questions.findById(savedQuestion.getId()).get();
         foundQ.delete(savedUser);
         testEntityManager.flush();
@@ -42,4 +46,5 @@ class QuestionRepositoryTest {
         Answer actual = answers.findById(savedAnswer.getId()).get();
         assertThat(actual.isDeleted()).isTrue();
     }
+
 }

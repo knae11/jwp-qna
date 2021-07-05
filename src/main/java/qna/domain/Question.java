@@ -35,7 +35,7 @@ public class Question extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "writer_id")
     private User writer;
-    @OneToMany(mappedBy = "question", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "question", fetch = FetchType.LAZY)
     private List<Answer> answers = new ArrayList<>();
 
     protected Question() {
